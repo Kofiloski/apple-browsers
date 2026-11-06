@@ -2,6 +2,9 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [[ "${AI_UI_RELEASE_MODE:-0}" == "1" ]]; then
+  exec bash "$ROOT_DIR/scripts/run-release-ui-scenario.sh" "$@"
+fi
 cd "$ROOT_DIR"
 if [[ "${1:-}" == "inspect" ]]; then
   echo "This example maps one reviewed scenario to an existing native XCTest; AI inspection/planning is not configured." >&2

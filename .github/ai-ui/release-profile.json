@@ -1,0 +1,54 @@
+{
+  "upstream": "duckduckgo/apple-browsers",
+  "source_seed": "838a682e32d0e300c921aae4bf8cf02a203ea5bc",
+  "tag_pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)\\+ios$",
+  "project": "iOS/DuckDuckGo-iOS.xcodeproj",
+  "scheme": "iOS UI Tests",
+  "target": "UI Tests",
+  "runner": "scripts/run-release-ui-scenario.sh",
+  "build_command": [
+    "bash",
+    "scripts/skills-build-for-testing.sh"
+  ],
+  "prepare_commands": [],
+  "launch_presets": [
+    {
+      "action": "launch",
+      "arguments": [
+        "-clearAllDefaults",
+        "isRunningUITests",
+        "-isOnboardingCompleted",
+        "true",
+        "-ff.alwaysShowKeyboardOnNewTabPage",
+        "false",
+        "-AppleLanguages",
+        "(en)",
+        "-AppleLocale",
+        "en_US"
+      ],
+      "environment": {
+        "UITEST_MODE": "1"
+      }
+    },
+    {
+      "action": "launch",
+      "arguments": [
+        "isRunningUITests",
+        "-isOnboardingCompleted",
+        "true",
+        "-ff.alwaysShowKeyboardOnNewTabPage",
+        "false",
+        "-AppleLanguages",
+        "(en)",
+        "-AppleLocale",
+        "en_US"
+      ],
+      "environment": {
+        "UITEST_MODE": "1"
+      }
+    }
+  ],
+  "max_tests": 3,
+  "simulator_name": "iPhone 18 Pro",
+  "simulator_runtime": "27.0"
+}

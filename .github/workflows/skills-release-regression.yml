@@ -1,0 +1,52 @@
+name: Release diff UI regressions
+
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+    inputs:
+      head_tag:
+        description: Upstream iOS release tag; blank selects the pending/latest release
+        type: string
+        default: ""
+      base_tag:
+        description: Previous release tag; blank selects its version predecessor
+        type: string
+        default: ""
+      force:
+        description: Rerun the latest release even if already reported
+        type: boolean
+        default: false
+      provider:
+        description: anthropic, openai, or openai-compatible; blank inherits repository configuration
+        type: string
+        default: ""
+      model:
+        description: Exact model ID; blank inherits repository configuration
+        type: string
+        default: ""
+      effort:
+        description: Provider/model effort or default
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  release-regression:
+    if: github.event_name == 'workflow_dispatch' || vars.ENABLE_RELEASE_CHECKS == 'true'
+    permissions:
+      contents: write
+    uses: Kofiloski/ios-ai-ui-check/.github/workflows/release-check.yml@105a52d42f73c478d85bac251ec4a2150aaee56a
+    with:
+      action-ref: 105a52d42f73c478d85bac251ec4a2150aaee56a
+      head-tag: ${{ inputs.head_tag || '' }}
+      base-tag: ${{ inputs.base_tag || '' }}
+      force: ${{ inputs.force || false }}
+      provider: ${{ inputs.provider || vars.AI_UI_PLANNER_PROVIDER || 'anthropic' }}
+      model: ${{ inputs.model || vars.AI_UI_PLANNER_MODEL || ((inputs.provider || vars.AI_UI_PLANNER_PROVIDER || 'anthropic') == 'anthropic' && 'claude-sonnet-4-6') || '' }}
+      effort: ${{ inputs.effort || vars.AI_UI_PLANNER_EFFORT || 'default' }}
+      base-url: ${{ vars.AI_UI_PLANNER_BASE_URL || '' }}
+    secrets:
+      planner-api-key: ${{ secrets.AI_UI_PLANNER_API_KEY || ((inputs.provider || vars.AI_UI_PLANNER_PROVIDER || 'anthropic') == 'anthropic' && secrets.ANTHROPIC_API_KEY) || ((inputs.provider || vars.AI_UI_PLANNER_PROVIDER || 'anthropic') == 'openai' && secrets.OPENAI_API_KEY) || '' }}

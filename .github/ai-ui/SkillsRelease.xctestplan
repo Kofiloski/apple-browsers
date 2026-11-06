@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "configurations": [
+    {
+      "id": "D76F856D-62B0-4C84-9378-8F1BA14BEF07",
+      "name": "Release regressions",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {
+    "codeCoverage": false,
+    "language": "en",
+    "region": "US"
+  },
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:../../iOS/DuckDuckGo-iOS.xcodeproj",
+        "identifier": "23215268B3D7426DA0FAC923",
+        "name": "UI Tests"
+      }
+    }
+  ]
+}

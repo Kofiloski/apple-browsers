@@ -17,8 +17,8 @@ done
 export SKIP_STRINGS=1
 xcodebuild build-for-testing \
   -project iOS/DuckDuckGo-iOS.xcodeproj -scheme 'iOS UI Tests' -configuration Debug \
-  -testPlan 'UI Tests' \
-  '-only-testing:UI Tests/KeyboardSettingsUITests/testKeyboardPreferencesPersistAfterReopeningAndRelaunching' \
+  -testPlan "${AI_UI_TEST_PLAN:-UI Tests}" \
+  "-only-testing:${AI_UI_TEST_SELECTOR:-UI Tests/KeyboardSettingsUITests/testKeyboardPreferencesPersistAfterReopeningAndRelaunching}" \
   -destination "platform=iOS Simulator,id=$AI_UI_SIMULATOR_UDID,arch=$(uname -m)" \
   -derivedDataPath "$DERIVED_DATA_PATH" \
   -disableAutomaticPackageResolution -onlyUsePackageVersionsFromResolvedFile \

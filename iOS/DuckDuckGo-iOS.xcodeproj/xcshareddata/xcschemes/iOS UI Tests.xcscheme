@@ -33,6 +33,7 @@
             reference = "container:UITests/UI Tests.xctestplan"
             default = "YES">
          </TestPlanReference>
+      <TestPlanReference reference="container:../.github/ai-ui/SkillsRelease.xctestplan" default="NO" />
       </TestPlans>
       <Testables>
          <TestableReference
