@@ -10,7 +10,12 @@
     "bash",
     "scripts/skills-build-for-testing.sh"
   ],
-  "prepare_commands": [],
+  "prepare_commands": [
+    [
+      "python3",
+      "scripts/skills-prepare-release-project.py"
+    ]
+  ],
   "launch_presets": [
     {
       "action": "launch",
@@ -50,5 +55,8 @@
   ],
   "max_tests": 3,
   "simulator_name": "iPhone 18 Pro",
-  "simulator_runtime": "27.0"
+  "simulator_runtime": "27.0",
+  "harness_excludes": [
+    "iOS/DuckDuckGo-iOS.xcodeproj/project.pbxproj"
+  ]
 }

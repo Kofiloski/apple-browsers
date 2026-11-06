@@ -123,6 +123,13 @@ upstream issues or PRs.
 The app profile in `.github/ai-ui/release-profile.json` owns stable tag filters,
 the source seed for the harness overlay, reviewed launch presets, and build/test
 configuration. A changed upstream project may require a reviewed profile update.
+The release profile excludes the snapshot PBX patch because stable 7.244.0 orders
+its objects differently. `skills-prepare-release-project.py` uses the actual
+project graph to remove the private font and add only the two Debug Simulator
+overrides, then checks that every other parsed value is preserved. Its receipt
+is retained in `release-input/project-preparation.json`. This preparation passed
+against both the original snapshot and the selected stable release; it does not
+establish a full build or UI pass for that release.
 No live provider generation or full release-flow execution has been verified yet.
 
 The [credential-gate run on November 6, 2026](https://github.com/Kofiloski/apple-browsers/actions/runs/42296870893)
