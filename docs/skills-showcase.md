@@ -2,6 +2,7 @@
 summary: Reproduce the independent DuckDuckGo keyboard-preference UI check and interpret its evidence.
 read_when:
   - Running the public iOS skills workflow
+  - Comparing upstream releases and reviewing generated UI test reports
   - Reviewing local versus hosted DuckDuckGo test results
 ---
 
@@ -123,3 +124,9 @@ The app profile in `.github/ai-ui/release-profile.json` owns stable tag filters,
 the source seed for the harness overlay, reviewed launch presets, and build/test
 configuration. A changed upstream project may require a reviewed profile update.
 No live provider generation or full release-flow execution has been verified yet.
+
+The [credential-gate run on November 6, 2026](https://github.com/Kofiloski/apple-browsers/actions/runs/42296870893)
+resolved 7.243.0+ios → 7.244.0+ios, skipped the macOS/planning/execution jobs, and
+[archived a blocked report and evidence](https://github.com/Kofiloski/apple-browsers/releases/tag/ui-check-118b2048839dc050db29).
+The final coverage gate failed deliberately. This verifies missing-key handling
+and historical publication; it does not establish generated UI coverage.

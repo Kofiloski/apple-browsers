@@ -14,7 +14,7 @@ The baseline workflow uses a checked-in scenario. No AXe or model API key is req
 
 This fork is not affiliated with or endorsed by the upstream project. Its source attribution and license are retained below.
 
-Release-diff generation is configured separately in [Release diff UI regressions](.github/workflows/skills-release-regression.yml). It requires provider credentials and an explicit scheduling opt-in; [setup and verification status](docs/skills-showcase.md#release-diff-regressions). No live model-generated release run has been verified yet.
+Release-diff generation is configured separately in [Release diff UI regressions](.github/workflows/skills-release-regression.yml). It requires provider credentials and an explicit scheduling opt-in; [setup and verification status](docs/skills-showcase.md#release-diff-regressions). [Missing-key handling and report archival were verified](https://github.com/Kofiloski/apple-browsers/actions/runs/42296870893); live generated UI coverage remains unverified.
 
 <details>
 <summary>Upstream app documentation</summary>
