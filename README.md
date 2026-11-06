@@ -1,9 +1,21 @@
-# DuckDuckGo Apple Browsers
+# DuckDuckGo for iOS: iOS UI Check showcase
 
-Independent skills showcase: [native keyboard-preference checks and evidence status](docs/skills-showcase.md).
-This example requires no model API key and is not endorsed by DuckDuckGo.
+[![Native UI check](https://github.com/Kofiloski/apple-browsers/actions/workflows/skills-public-check.yml/badge.svg?branch=skills-showcase&event=workflow_dispatch)](https://github.com/Kofiloski/apple-browsers/actions/workflows/skills-public-check.yml)
 
-Verified hosted run: [1 keyboard-preference persistence test passed](https://github.com/Kofiloski/apple-browsers/actions/runs/42212517733).
+This independent fork demonstrates the [ios-ai-ui-check action](https://github.com/Kofiloski/ios-ai-ui-check) against the real [DuckDuckGo for iOS app](https://github.com/duckduckgo/apple-browsers). The workflow builds the app, invokes the released v0.6.0 action, and collects native XCTest results and video.
+
+- **Tested flow:** Check keyboard defaults, change both switches, navigate away, relaunch, and verify the preferences persist.
+- **Verified run:** [Passed on November 6, 2026](https://github.com/Kofiloski/apple-browsers/actions/runs/42212517733). 1 UI test passed through our action, with zero failures or skips.
+- **Coverage:** Pinned iOS branch snapshot using the supported system-font fallback. Local UI validation remains storage-limited; the verified result is from GitHub Actions.
+
+The manual workflow uses a checked-in scenario. No AXe or model API key is required; live AI planning is not exercised by this example.
+
+[Run in GitHub Actions](https://github.com/Kofiloski/apple-browsers/actions/workflows/skills-public-check.yml) · [Reproduce and inspect coverage](docs/skills-showcase.md) · [Get the toolkit](https://github.com/Kofiloski/ios-release-quality-toolkit)
+
+This fork is not affiliated with or endorsed by the upstream project. Its source attribution and license are retained below.
+
+<details>
+<summary>Upstream app documentation</summary>
 
 This repo contains the source code for the DuckDuckGo iOS and macOS browsers, and the libraries that are shared between them to provide cross-platform features.
 
@@ -65,3 +77,5 @@ Copyright 2026 DuckDuckGo
 Duck Sans is a proprietary typeface created by Fontwerk and licensed to DuckDuckGo under commercial terms. Duck Sans font files are not licensed under the Apache License, Version 2.0, or covered by any open-source license applicable to this repository. You may not extract, copy, distribute, modify, or use Duck Sans font files for any purpose outside of running this software as distributed by DuckDuckGo. Redistributions of compiled builds that include Duck Sans must retain this notice. All rights in and to Duck Sans are reserved by Fontwerk (fontwerk.com).
 
 If you do not have a valid Duck Sans license, remove the DuckSansFont package and the app will fall back to the system font at runtime.
+
+</details>
