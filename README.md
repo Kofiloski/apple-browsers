@@ -3,6 +3,8 @@
 Independent skills showcase: [native keyboard-preference checks and evidence status](docs/skills-showcase.md).
 This example requires no model API key and is not endorsed by DuckDuckGo.
 
+Verified hosted run: [1 keyboard-preference persistence test passed](https://github.com/Kofiloski/apple-browsers/actions/runs/42212517733).
+
 This repo contains the source code for the DuckDuckGo iOS and macOS browsers, and the libraries that are shared between them to provide cross-platform features.
 
 ## Building

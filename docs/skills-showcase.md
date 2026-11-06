@@ -56,15 +56,30 @@ submodule test corpora. They are not fetched for this example.
 
 ## Evidence status
 
-Locked dependency resolution passed locally. The first local app build was
-stopped by a disk-space monitor at a 1 GiB reserve, with no compiler error
-reported. Full local app/UI validation remains pending storage availability.
-The first hosted build compiled the app, then failed embedded-binary validation:
-the Autofill extension still used the upstream ID under our isolated app ID.
-The next hosted build passed, but Simulator installation found the same mismatch
-in the Network extension copied by a shell phase. Both Debug Simulator extension
-IDs now derive from the isolated app ID, and post-build validation checks all
-embedded extensions. No DuckDuckGo UI pass is claimed yet.
+The [hosted run on November 6, 2026](https://github.com/Kofiloski/apple-browsers/actions/runs/42212517733)
+passed the full build and selected native test: **one test, zero failures, zero
+skips**, in 181.367 seconds. The tested harness is
+`83a160b2efb2f237cfc78e04276ae504385de5fc`. Downloaded XCTest results were
+independently checked with `xcresulttool`; the runner and native counts match.
+The log confirms real navigation, switch changes, termination and relaunch.
+Three native screenshots show defaults, changed values and persistence after
+relaunch; the workflow also records video. The parent artifact
+`duckduckgo-public-check` is retained for 14 days.
+
+Locked dependency resolution passed locally. Both local app-build attempts
+stopped at the disk monitor's 1 GiB reserve, including the replay after an
+approved Firefox build cleanup. Neither reported a compiler error. A local
+DuckDuckGo UI pass is still unverified; the hosted pass is separate evidence.
+
+The [first hosted build](https://github.com/Kofiloski/apple-browsers/actions/runs/42135371081)
+failed embedded-binary validation because the Autofill extension retained its
+upstream ID under our isolated app ID. The
+[next build](https://github.com/Kofiloski/apple-browsers/actions/runs/42139753254)
+passed, then Simulator installation found the same mismatch in the Network
+extension copied by a shell phase. Both Debug Simulator IDs now derive from
+`APP_ID`. All five IDs were verified through Xcode settings and in the completed
+app before the passing UI replay. These were integration configuration failures;
+production Swift and native test assertions were unchanged.
 
 Retain logs, video, the native screenshots inside `.xcresult`, machine-readable
 test counts and source provenance. This check covers keyboard-preference
