@@ -1,0 +1,2 @@
+// Keep the isolated group prefix after Configuration.xcconfig's default.
+GROUP_ID_PREFIX = group.dev.kofiloski.skills.duckduckgo

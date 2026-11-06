@@ -1,0 +1,8 @@
+{
+  "name": "DuckDuckGo keyboard preferences survive navigation and relaunch",
+  "description": "Maps to the existing KeyboardSettingsUITests/testKeyboardPreferencesPersistAfterReopeningAndRelaunching native test. It arranges its feature flag and onboarding state explicitly, checks defaults, changes both switches, verifies persistence through navigation and relaunch, then restores the defaults. No LLM key is required.",
+  "steps": [
+    { "action": "launch" },
+    { "action": "assertVisible", "label": "Keyboard" }
+  ]
+}

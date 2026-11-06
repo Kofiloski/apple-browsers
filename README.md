@@ -1,5 +1,8 @@
 # DuckDuckGo Apple Browsers
 
+Independent skills showcase: [native keyboard-preference checks and evidence status](docs/skills-showcase.md).
+This example requires no model API key and is not endorsed by DuckDuckGo.
+
 This repo contains the source code for the DuckDuckGo iOS and macOS browsers, and the libraries that are shared between them to provide cross-platform features.
 
 ## Building

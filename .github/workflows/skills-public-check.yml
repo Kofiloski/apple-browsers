@@ -1,0 +1,79 @@
+name: Public iOS skills check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  duckduckgo:
+    runs-on: xcode-27
+    timeout-minutes: 60
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
+      AI_UI_DERIVED_DATA_PATH: ${{ github.workspace }}/.derivedData/ai-ui
+      SIMULATOR_NAME: iPhone 18 Pro
+      SIMULATOR_RUNTIME: "27.0"
+      SOURCE_HEAD: 838a682e32d0e300c921aae4bf8cf02a203ea5bc
+    steps:
+      - name: Checkout independent showcase
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Apply the harness to the exact inspected source
+        run: |
+          mkdir -p artifacts/duckduckgo
+          git diff --binary "$SOURCE_HEAD" HEAD > "$RUNNER_TEMP/skills-overlay.patch"
+          git checkout --detach "$SOURCE_HEAD"
+          git apply "$RUNNER_TEMP/skills-overlay.patch"
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD"
+          printf 'Harness: %s\nApp source: %s\nCoverage: branch-snapshot baseline, not a release comparison\n' \
+            "$GITHUB_SHA" "$SOURCE_HEAD" > artifacts/duckduckgo/provenance.txt
+          shasum -a 256 "$RUNNER_TEMP/skills-overlay.patch" >> artifacts/duckduckgo/provenance.txt
+
+      - name: Checkout released UI check
+        uses: actions/checkout@v5
+        with:
+          repository: Kofiloski/ios-ai-ui-check
+          ref: bde934737ad068298459d9eaecdd8b176b3f8700 # v0.6.0
+          path: .tooling/ios-ai-ui-check
+          persist-credentials: false
+
+      - name: Boot the selected Simulator
+        run: |
+          ./.tooling/ios-ai-ui-check/scripts/boot-simulator.sh "$RUNNER_TEMP/skills-simulator.env"
+          source "$RUNNER_TEMP/skills-simulator.env"
+          python3 - <<'PY'
+          import os
+          keys = ("AI_UI_SIMULATOR_UDID", "AI_UI_SIMULATOR_DEVICE_NAME",
+                  "AI_UI_SIMULATOR_RUNTIME_ID", "AI_UI_SIMULATOR_RUNTIME_NAME")
+          with open(os.environ["GITHUB_ENV"], "a") as output:
+              for key in keys:
+                  output.write(f"{key}={os.environ[key]}\n")
+          PY
+
+      - name: Build the real app and existing UI test
+        run: |
+          set -euo pipefail
+          bash scripts/skills-build-for-testing.sh 2>&1 | tee artifacts/duckduckgo/build.log
+
+      - name: Verify keyboard preference persistence with native XCTest
+        uses: ./.tooling/ios-ai-ui-check
+        with:
+          provided-scenario-path: .github/ai-ui/verify-primary-flow.json
+          simulator-name: ${{ env.SIMULATOR_NAME }}
+          simulator-runtime: ${{ env.SIMULATOR_RUNTIME }}
+          artifacts-dir: artifacts/duckduckgo/ui
+          comment-on-pr: "false"
+          max-duration-seconds: "600"
+
+      - name: Preserve source, build and UI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: duckduckgo-public-check
+          path: artifacts/duckduckgo
+          retention-days: 14

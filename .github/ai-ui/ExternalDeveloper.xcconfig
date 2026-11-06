@@ -1,0 +1,7 @@
+// Isolated Simulator identity; no device signing account is configured.
+DEVELOPMENT_TEAM =
+APP_ID = dev.kofiloski.skills.duckduckgo
+GROUP_ID_PREFIX = group.dev.kofiloski.skills.duckduckgo
+CODE_SIGN_STYLE = Manual
+PROVISIONING_PROFILE_SPECIFIER =
+SUBSCRIPTION_APP_GROUP = dev.kofiloski.skills.duckduckgo.subscriptions
