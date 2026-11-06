@@ -46,8 +46,10 @@ the upstream README's supported external-contributor fallback. The app renders
 system fonts, so these images are a different visual baseline from builds using
 the proprietary font. No font files are copied or distributed by this example.
 Other dependency pins and the production Swift/test implementations are unchanged.
-The Debug Autofill extension has a Simulator-only bundle ID derived from `APP_ID`,
-so Xcode can validate it inside the isolated app. Its device ID is unchanged.
+The Debug Autofill and Network extensions have Simulator-only bundle IDs derived
+from `APP_ID`, preserving their device IDs. The helper validates every embedded
+`.appex` ID after building, including the Network extension copied by a shell
+phase rather than Xcode's normal embedding phase.
 
 The selected UI path does not use the snapshot-reference or privacy-reference
 submodule test corpora. They are not fetched for this example.
@@ -59,8 +61,10 @@ stopped by a disk-space monitor at a 1 GiB reserve, with no compiler error
 reported. Full local app/UI validation remains pending storage availability.
 The first hosted build compiled the app, then failed embedded-binary validation:
 the Autofill extension still used the upstream ID under our isolated app ID.
-A Simulator-only extension-ID correction is being verified before a new hosted
-run. No DuckDuckGo UI pass is claimed yet.
+The next hosted build passed, but Simulator installation found the same mismatch
+in the Network extension copied by a shell phase. Both Debug Simulator extension
+IDs now derive from the isolated app ID, and post-build validation checks all
+embedded extensions. No DuckDuckGo UI pass is claimed yet.
 
 Retain logs, video, the native screenshots inside `.xcresult`, machine-readable
 test counts and source provenance. This check covers keyboard-preference

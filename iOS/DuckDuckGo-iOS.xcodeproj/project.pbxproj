@@ -2274,6 +2274,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_SWIFT_FLAGS = "-D NETWORK_EXTENSION";
 				PRODUCT_BUNDLE_IDENTIFIER = com.duckduckgo.mobile.ios.NetworkExtension;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator*]" = "$(APP_ID).NetworkExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
