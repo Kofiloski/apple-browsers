@@ -41,7 +41,7 @@ xcodebuild test-without-building \
   -destination "platform=iOS Simulator,id=$AI_UI_SIMULATOR_UDID,arch=$(uname -m)" \
   -derivedDataPath "$DERIVED_DATA_PATH" -resultBundlePath "$RESULT_PATH" \
   -disableAutomaticPackageResolution -onlyUsePackageVersionsFromResolvedFile \
-  -packageAuthorizationProvider netrc -skipMacroValidation -skipMacroValidation -parallel-testing-enabled NO \
+  -packageAuthorizationProvider netrc -skipMacroValidation -parallel-testing-enabled NO \
   CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=YES CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual \
   DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= COMPILER_INDEX_STORE_ENABLE=NO \
   2>&1 | tee "$ARTIFACTS_DIR/xcodebuild-ui-test.log"

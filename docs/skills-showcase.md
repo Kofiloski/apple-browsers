@@ -46,6 +46,8 @@ the upstream README's supported external-contributor fallback. The app renders
 system fonts, so these images are a different visual baseline from builds using
 the proprietary font. No font files are copied or distributed by this example.
 Other dependency pins and the production Swift/test implementations are unchanged.
+The Debug Autofill extension has a Simulator-only bundle ID derived from `APP_ID`,
+so Xcode can validate it inside the isolated app. Its device ID is unchanged.
 
 The selected UI path does not use the snapshot-reference or privacy-reference
 submodule test corpora. They are not fetched for this example.
@@ -55,8 +57,10 @@ submodule test corpora. They are not fetched for this example.
 Locked dependency resolution passed locally. The first local app build was
 stopped by a disk-space monitor at a 1 GiB reserve, with no compiler error
 reported. Full local app/UI validation remains pending storage availability.
-Hosted execution is being prepared and must pass independently before it is
-reported as UI proof.
+The first hosted build compiled the app, then failed embedded-binary validation:
+the Autofill extension still used the upstream ID under our isolated app ID.
+A Simulator-only extension-ID correction is being verified before a new hosted
+run. No DuckDuckGo UI pass is claimed yet.
 
 Retain logs, video, the native screenshots inside `.xcresult`, machine-readable
 test counts and source provenance. This check covers keyboard-preference
