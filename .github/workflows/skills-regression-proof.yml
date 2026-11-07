@@ -1,0 +1,185 @@
+name: Controlled keyboard regression proof
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: skills-regression-proof-${{ github.repository }}
+  cancel-in-progress: false
+
+env:
+  UI_ACTION_SHA: 8da08908b1c3ea07c417bcb6af94321f54101920
+  SOURCE_HEAD: 838a682e32d0e300c921aae4bf8cf02a203ea5bc
+
+jobs:
+  native-proof:
+    runs-on: xcode-27
+    timeout-minutes: 60
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
+      AI_UI_DERIVED_DATA_PATH: ${{ github.workspace }}/.derivedData/ai-ui
+      SIMULATOR_NAME: iPhone 18 Pro
+      SIMULATOR_RUNTIME: "27.0"
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Apply the public harness to the recorded source snapshot
+        run: |
+          set -euo pipefail
+          mkdir -p proof
+          git diff --binary "$SOURCE_HEAD" HEAD -- . ':!README.md' ':!docs' ':!.github/workflows' > proof/harness.patch
+          git checkout --detach "$SOURCE_HEAD"
+          git apply --check proof/harness.patch
+          git apply proof/harness.patch
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD"
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path('proof')
+          source = Path('iOS/DuckDuckGo/Settings/Model/KeyboardSettings.swift')
+          test = Path('iOS/UITests/KeyboardSettingsUITests.swift')
+          (root / 'provenance.json').write_text(json.dumps(dict(
+              source_sha=os.environ['SOURCE_HEAD'], harness_sha=os.environ['GITHUB_SHA'],
+              action_sha=os.environ['UI_ACTION_SHA'], source_kind='inspected-branch-snapshot',
+              test_sha256=hashlib.sha256(test.read_bytes()).hexdigest(),
+              harness_patch_sha256=hashlib.sha256((root / 'harness.patch').read_bytes()).hexdigest(),
+              run_url=f'https://github.com/{os.environ["GITHUB_REPOSITORY"]}/actions/runs/{os.environ["GITHUB_RUN_ID"]}'
+          ), indent=2) + '\n')
+          Path(os.environ['RUNNER_TEMP'], 'keyboard-correct.swift').write_bytes(source.read_bytes())
+          PY
+      - uses: actions/checkout@v5
+        with:
+          repository: Kofiloski/ios-ai-ui-check
+          ref: ${{ env.UI_ACTION_SHA }}
+          path: .tooling/ios-ai-ui-check
+          persist-credentials: false
+      - name: Boot the reviewed iPhone Simulator
+        run: |
+          ./.tooling/ios-ai-ui-check/scripts/boot-simulator.sh "$RUNNER_TEMP/skills-simulator.env"
+          source "$RUNNER_TEMP/skills-simulator.env"
+          echo "AI_UI_SIMULATOR_UDID=$AI_UI_SIMULATOR_UDID" >> "$GITHUB_ENV"
+      - name: Build the original app and unchanged upstream UI test
+        run: |
+          set -euo pipefail
+          bash scripts/skills-build-for-testing.sh 2>&1 | tee proof/build-original.log
+      - name: Run original behavior through UI Check
+        id: original
+        continue-on-error: true
+        uses: ./.tooling/ios-ai-ui-check
+        with:
+          provided-scenario-path: .github/ai-ui/verify-primary-flow.json
+          simulator-name: ${{ env.SIMULATOR_NAME }}
+          simulator-runtime: ${{ env.SIMULATOR_RUNTIME }}
+          artifacts-dir: proof/original
+          upload-artifacts: "false"
+          comment-on-pr: "false"
+          max-duration-seconds: "600"
+      - name: Seed an explicitly labelled preference-key fault
+        if: steps.original.outcome == 'success'
+        run: |
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          import subprocess
+          source = Path('iOS/DuckDuckGo/Settings/Model/KeyboardSettings.swift')
+          before = source.read_bytes()
+          old = b'@UserDefaultsWrapper(key: .keyboardOnAppLaunch, defaultValue: false)'
+          new = b'@UserDefaultsWrapper(key: .keyboardOnNewTab, defaultValue: false)'
+          if before.count(old) != 1:
+              raise SystemExit('Unexpected source; refuse to seed a different fault')
+          source.write_bytes(before.replace(old, new))
+          patch = subprocess.check_output(['git', 'diff', '--binary', '--', str(source)])
+          Path('proof/seeded-fault.patch').write_bytes(patch)
+          Path('proof/mutation.json').write_text(json.dumps(dict(
+              original_sha256=hashlib.sha256(before).hexdigest(),
+              fault_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+              fault_patch_sha256=hashlib.sha256(patch).hexdigest()
+          ), indent=2) + '\n')
+          PY
+          set -euo pipefail
+          bash scripts/skills-build-for-testing.sh 2>&1 | tee proof/build-seeded-fault.log
+      - name: Run the same test against the seeded fault
+        id: fault
+        if: steps.original.outcome == 'success'
+        continue-on-error: true
+        uses: ./.tooling/ios-ai-ui-check
+        with:
+          provided-scenario-path: .github/ai-ui/verify-primary-flow.json
+          simulator-name: ${{ env.SIMULATOR_NAME }}
+          simulator-runtime: ${{ env.SIMULATOR_RUNTIME }}
+          artifacts-dir: proof/seeded-fault
+          upload-artifacts: "false"
+          comment-on-pr: "false"
+          max-duration-seconds: "600"
+      - name: Restore original source and rebuild
+        if: steps.original.outcome == 'success'
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          source = Path('iOS/DuckDuckGo/Settings/Model/KeyboardSettings.swift')
+          source.write_bytes(Path(os.environ['RUNNER_TEMP'], 'keyboard-correct.swift').read_bytes())
+          path = Path('proof/mutation.json')
+          value = json.loads(path.read_text())
+          value['restored_sha256'] = hashlib.sha256(source.read_bytes()).hexdigest()
+          path.write_text(json.dumps(value, indent=2) + '\n')
+          PY
+          set -euo pipefail
+          bash scripts/skills-build-for-testing.sh 2>&1 | tee proof/build-restored.log
+      - name: Run the same test after restoration
+        id: restored
+        if: steps.original.outcome == 'success'
+        continue-on-error: true
+        uses: ./.tooling/ios-ai-ui-check
+        with:
+          provided-scenario-path: .github/ai-ui/verify-primary-flow.json
+          simulator-name: ${{ env.SIMULATOR_NAME }}
+          simulator-runtime: ${{ env.SIMULATOR_RUNTIME }}
+          artifacts-dir: proof/restored
+          upload-artifacts: "false"
+          comment-on-pr: "false"
+          max-duration-seconds: "600"
+      - name: Verify the native pass-fail-pass result
+        if: always()
+        env:
+          ORIGINAL_OUTCOME: ${{ steps.original.outcome }}
+          FAULT_OUTCOME: ${{ steps.fault.outcome }}
+          RESTORED_OUTCOME: ${{ steps.restored.outcome }}
+        run: |
+          git diff --exit-code "$SOURCE_HEAD" -- iOS/UITests/KeyboardSettingsUITests.swift
+          python3 scripts/skills-verify-regression-proof.py
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: controlled-regression-proof
+          path: proof
+          retention-days: 14
+
+  publish:
+    needs: native-proof
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: controlled-regression-proof
+          path: proof
+      - name: Publish immutable controlled-proof evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python3 -c 'import json; assert json.load(open("proof/report.json"))["status"] == "passed"'
+          tag="skills-controlled-proof-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          tar -czf controlled-regression-evidence.tar.gz -C proof .
+          gh release create "$tag" controlled-regression-evidence.tar.gz proof/report.json \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "Controlled keyboard-preference fault: native pass-fail-pass" \
+            --notes-file proof/report.md

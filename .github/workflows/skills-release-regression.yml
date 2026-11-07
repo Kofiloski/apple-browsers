@@ -38,9 +38,9 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || vars.ENABLE_RELEASE_CHECKS == 'true'
     permissions:
       contents: write
-    uses: Kofiloski/ios-ai-ui-check/.github/workflows/release-check.yml@fec98e75076c9f07aa9c47b017b6998d64b98d19
+    uses: Kofiloski/ios-ai-ui-check/.github/workflows/release-check.yml@8da08908b1c3ea07c417bcb6af94321f54101920
     with:
-      action-ref: fec98e75076c9f07aa9c47b017b6998d64b98d19
+      action-ref: 8da08908b1c3ea07c417bcb6af94321f54101920
       head-tag: ${{ inputs.head_tag || '' }}
       base-tag: ${{ inputs.base_tag || '' }}
       force: ${{ inputs.force || false }}

@@ -1,5 +1,7 @@
 # DuckDuckGo for iOS: iOS UI Check showcase
 
+Active flagship: native preference-persistence checks and a [controlled regression proof](docs/skills-regression-proof.md). The controlled proof is being validated; live automatically generated release coverage remains unverified.
+
 [![Native UI check](https://github.com/Kofiloski/apple-browsers/actions/workflows/skills-public-check.yml/badge.svg?branch=skills-showcase&event=workflow_dispatch)](https://github.com/Kofiloski/apple-browsers/actions/workflows/skills-public-check.yml)
 
 This independent fork demonstrates the [ios-ai-ui-check action](https://github.com/Kofiloski/ios-ai-ui-check) against the real [DuckDuckGo for iOS app](https://github.com/duckduckgo/apple-browsers). The workflow builds the app, invokes the released v0.6.0 action, and collects native XCTest results and video.
