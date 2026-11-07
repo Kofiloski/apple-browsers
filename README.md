@@ -1,6 +1,6 @@
 # DuckDuckGo for iOS: iOS UI Check showcase
 
-Active flagship: native preference-persistence checks and a [controlled regression proof](docs/skills-regression-proof.md). The controlled proof is being validated; live automatically generated release coverage remains unverified.
+Active flagship: native preference-persistence checks and a [controlled regression proof](docs/skills-regression-proof.md). [Native pass-fail-pass was verified](https://github.com/Kofiloski/apple-browsers/releases/tag/skills-controlled-proof-42372200480-1); live automatically generated release coverage remains unverified.
 
 [![Native UI check](https://github.com/Kofiloski/apple-browsers/actions/workflows/skills-public-check.yml/badge.svg?branch=skills-showcase&event=workflow_dispatch)](https://github.com/Kofiloski/apple-browsers/actions/workflows/skills-public-check.yml)
 
@@ -17,6 +17,8 @@ The baseline workflow uses a checked-in scenario. No AXe or model API key is req
 This fork is not affiliated with or endorsed by the upstream project. Its source attribution and license are retained below.
 
 Release-diff generation is configured separately in [Release diff UI regressions](.github/workflows/skills-release-regression.yml). It requires provider credentials and an explicit scheduling opt-in; [setup and verification status](docs/skills-showcase.md#release-diff-regressions). [Missing-key handling and report archival were verified](https://github.com/Kofiloski/apple-browsers/actions/runs/42296870893); live generated UI coverage remains unverified.
+
+[Permanent baseline evidence](https://github.com/Kofiloski/apple-browsers/releases/tag/skills-baseline-42212517733) includes native results, logs, video and exact source identities beyond Actions retention.
 
 <details>
 <summary>Upstream app documentation</summary>

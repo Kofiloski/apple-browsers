@@ -137,3 +137,16 @@ resolved 7.243.0+ios → 7.244.0+ios, skipped the macOS/planning/execution jobs,
 [archived a blocked report and evidence](https://github.com/Kofiloski/apple-browsers/releases/tag/ui-check-118b2048839dc050db29).
 The final coverage gate failed deliberately. This verifies missing-key handling
 and historical publication; it does not establish generated UI coverage.
+
+## Permanent native evidence
+
+The [verified baseline bundle](https://github.com/Kofiloski/apple-browsers/releases/tag/skills-baseline-42212517733) preserves the
+original native result bundles, scenario, logs and recording, with source, harness
+and action revisions. Asset hashes and the native result counts were verified
+before publication. These fixed baseline records remain separate from live
+model-generated release tests.
+
+The [controlled proof](skills-regression-proof.md) separately verifies that an
+unchanged native assertion detects an explicitly seeded preference-storage fault
+and passes after restoration. It uses the inspected source snapshot and does not
+claim that the fault existed in an upstream release.

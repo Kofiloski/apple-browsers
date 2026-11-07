@@ -37,6 +37,13 @@ verified evidence under an immutable `skills-controlled-proof-<run>-<attempt>`
 prerelease. These are engineering results, not upstream application releases.
 Ordinary diagnostic artifacts remain available even if the proof fails.
 
-Status: workflow prepared; no successful controlled proof is claimed until its
-native pass-fail-pass result is verified. A new user's docs-only adoption and
-live unattended diff-driven generation remain separate verification tasks.
+Status: [run 42372200480](https://github.com/Kofiloski/apple-browsers/actions/runs/42372200480)
+passed. Native result bundles independently verify one original pass, one seeded
+failure (`XCTAssertEqual`: observed 1, expected 0), and one restored pass, with
+zero skips. Original and restored source hashes match. The unchanged test-source
+check passed. [Permanent evidence and recordings](https://github.com/Kofiloski/apple-browsers/releases/tag/skills-controlled-proof-42372200480-1)
+retain the source/harness/action identities and the exact mutation.
+
+The native run reproduced this from a fresh GitHub-hosted checkout. That is cold
+CI reproducibility, not a measured fresh-user onboarding study. Live unattended
+diff-driven generation remains unverified because no planner key is configured.
