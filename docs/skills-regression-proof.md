@@ -47,3 +47,9 @@ retain the source/harness/action identities and the exact mutation.
 The native run reproduced this from a fresh GitHub-hosted checkout. That is cold
 CI reproducibility, not a measured fresh-user onboarding study. Live unattended
 diff-driven generation remains unverified because no planner key is configured.
+
+The observed initial cold build took 32 minutes 51 seconds; the complete native
+job, including all three variants, took 59 minutes 10 seconds. The manual proof
+now allows 75 minutes so a repeat is not constrained by the original 60-minute
+limit. This three-variant workload is not scheduled on each upstream release.
+Peak disk consumption and a new user's setup time were not measured.

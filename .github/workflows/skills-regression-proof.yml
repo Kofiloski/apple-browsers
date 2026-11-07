@@ -17,7 +17,7 @@ env:
 jobs:
   native-proof:
     runs-on: xcode-27
-    timeout-minutes: 60
+    timeout-minutes: 75
     env:
       DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
       AI_UI_DERIVED_DATA_PATH: ${{ github.workspace }}/.derivedData/ai-ui
